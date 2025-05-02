@@ -1,3 +1,4 @@
+pub mod db;
 mod importer;
 
 use anyhow::Result;
