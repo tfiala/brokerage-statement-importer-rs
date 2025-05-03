@@ -1,4 +1,4 @@
-use anydb::Result;
+use anyhow::Result;
 use mongodb::{Client, Database};
 
 pub struct MongoClient {
@@ -13,12 +13,5 @@ impl MongoClient {
 
     pub async fn get_database(&self, db_name: &str) -> Database {
         self.client.database(db_name)
-    }
-}
-
-impl Drop for MongoClient {
-    fn drop(&mut self) {
-        // Close the client connection when the struct is dropped
-        let _ = self.client.close(None);
     }
 }

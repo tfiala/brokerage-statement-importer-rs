@@ -491,6 +491,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "git+https://github.com/allan2/dotenvy#86c0d6dd2938e615135813df9e3274bf8f42c455"
+
+[[package]]
 name = "enum-as-inner"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -772,7 +777,7 @@ dependencies = [
 [[package]]
 name = "ibkr-flex-statement"
 version = "0.2.0"
-source = "sparse+http://ice:9080/"
+source = "sparse+http://localhost:9080/"
 checksum = "26067198ac54b4c731e6fb29a2f43ae8c7737b9d1268ae8a9ac893f4093d743f"
 dependencies = [
  "anyhow",
@@ -787,6 +792,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "dotenvy",
  "futures",
  "glob",
  "ibkr-flex-statement",

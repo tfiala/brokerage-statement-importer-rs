@@ -3,14 +3,22 @@ mod importer;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
+use db::client::MongoClient;
+use futures::StreamExt;
+use mongodb::bson::{Document, doc};
 use std::path::PathBuf;
 
+use dotenvy::EnvLoader;
 #[derive(Parser, Debug)]
 #[command(name = "tdb")]
 #[command(version, about = "trader database cli", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
+
+    /// The database URI to connect to. Defaults to DB_URI in .env file.
+    #[arg(short, long, required = false)]
+    db_uri: Option<String>,
 }
 
 #[derive(Debug, Subcommand)]
@@ -40,16 +48,63 @@ enum ImportCommands {
     },
 }
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
+    // Setup the environment
+    let env_map = EnvLoader::new().load()?;
     let args = Cli::parse();
+
+    let db_uri = match args.db_uri {
+        Some(uri) => uri,
+        None => env_map
+            .get("DB_URI")
+            .expect("DATABASE_URL not set in environment")
+            .to_string(),
+    };
+    println!("Connecting to database at: {}", db_uri);
+
+    // Connect to the database.
+    let client = MongoClient::new(&db_uri).await?;
+    println!("Connected to database");
+
+    // Get the database.
+    let db_name = env_map
+        .get("DB_NAME")
+        .expect("DB_NAME not set in environment")
+        .to_string();
+    let db = client.get_database(&db_name).await;
+    println!("Using database: {}", db_name);
+
+    // Insert something into the database.
+    let collection = db.collection::<Document>("test");
+    let doc = doc! {
+        "name": "MongoDB",
+        "type": "database",
+        "count": 1,
+        "info": {
+            "x": 203,
+            "y": 102
+        }
+    };
+    collection.insert_one(doc).await?;
+    println!("Inserted document into collection");
+
+    // Find something in the database.
+    let filter = doc! { "name": "MongoDB" };
+    let mut cursor = collection.find(filter).await?;
+
+    println!("Found documents:");
+    while let Some(result) = cursor.next().await {
+        match result {
+            Ok(document) => println!("{:?}", document),
+            Err(e) => eprintln!("Error: {}", e),
+        }
+    }
 
     match args.command {
         Commands::Import(import_args) => match import_args.command {
             ImportCommands::Regex { regex } => {
-                let glob_result = glob::glob(regex.as_str())?;
-                println!("glob result: {:?}", glob_result);
-
-                let globbed_paths = glob_result
+                let globbed_paths = glob::glob(regex.as_str())?
                     .filter_map(|entry| entry.ok())
                     .collect::<Vec<PathBuf>>();
 
