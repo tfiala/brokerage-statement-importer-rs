@@ -9,7 +9,7 @@ clap = { version = "4.5.37", features = ["derive"] }
 dotenvy = { git = "https://github.com/allan2/dotenvy" }
 futures = "0.3.31"
 glob = "0.3.2"
-ibkr-flex-statement = { version = "0.2.0", registry = "invezt-io-registry" }
+ibkr-flex-statement = "0.3"
 mongodb = "3.2.3"
 serde = "1.0.219"
 tokio = "1.44.2"

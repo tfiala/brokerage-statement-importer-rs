@@ -776,9 +776,9 @@ dependencies = [
 
 [[package]]
 name = "ibkr-flex-statement"
-version = "0.2.0"
-source = "sparse+http://localhost:9080/"
-checksum = "26067198ac54b4c731e6fb29a2f43ae8c7737b9d1268ae8a9ac893f4093d743f"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90bc24650a8675bb0a098664116e36eb3c128ac6364afc51452c91e40dd0ce0d"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1429,9 +1429,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.5.11"
+version = "0.5.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2f103c6d277498fbceb16e84d317e2a400f160f46904d5f5410848c829511a3"
+checksum = "928fca9cf2aa042393a8325b9ead81d2f0df4cb12e1e24cef072922ccd99c5af"
 dependencies = [
  "bitflags 2.9.0",
 ]
