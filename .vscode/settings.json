@@ -1,7 +1,13 @@
 {
   "cSpell.words": [
+    "ARGX",
     "bson",
+    "conid",
     "dotenv",
-    "dotenvy"
+    "dotenvy",
+    "IBKR",
+    "pathbuf",
+    "rstest",
+    "testcontainers"
   ]
 }

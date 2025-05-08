@@ -1,4 +1,4 @@
-mod importer;
+pub mod importer;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
