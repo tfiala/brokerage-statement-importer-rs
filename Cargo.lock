@@ -945,15 +945,9 @@ dependencies = [
 
 [[package]]
 name = "ibkr-flex-statement"
-<<<<<<< HEAD
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90bc24650a8675bb0a098664116e36eb3c128ac6364afc51452c91e40dd0ce0d"
-=======
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8887b0e501d5415083344fd19815172631733cee0071e8bc362595f985e3987"
->>>>>>> 4244592 (converting over to brokerage-statement-importer)
 dependencies = [
  "anyhow",
  "chrono",
