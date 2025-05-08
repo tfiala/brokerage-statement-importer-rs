@@ -582,7 +582,8 @@ dependencies = [
 [[package]]
 name = "dotenvy"
 version = "0.15.7"
-source = "git+https://github.com/allan2/dotenvy?rev=86c0d6dd2938e615135813df9e3274bf8f42c455#86c0d6dd2938e615135813df9e3274bf8f42c455"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
 name = "enum-as-inner"

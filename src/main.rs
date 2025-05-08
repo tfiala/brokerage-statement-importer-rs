@@ -3,9 +3,9 @@ mod importer;
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
 use mongodb::Client;
+use std::env;
 use std::path::PathBuf;
 
-use dotenvy::EnvLoader;
 #[derive(Parser, Debug)]
 #[command(name = "tdb")]
 #[command(version, about = "trader database cli", long_about = None)]
@@ -48,13 +48,13 @@ enum ImportCommands {
 #[tokio::main]
 async fn main() -> Result<()> {
     // Setup the environment
-    let env_map = EnvLoader::new().load()?;
+    dotenvy::dotenv()?;
+
     let args = Cli::parse();
 
     let db_uri = match args.db_uri {
         Some(uri) => uri,
-        None => env_map
-            .get("DB_URI")
+        None => env::var("DB_URI")
             .expect("DATABASE_URL not set in environment")
             .to_string(),
     };
@@ -67,8 +67,7 @@ async fn main() -> Result<()> {
     println!("Connected to database");
 
     // Get the database.
-    let db_name = env_map
-        .get("DB_NAME")
+    let db_name = env::var("DB_NAME")
         .expect("DB_NAME not set in environment")
         .to_string();
     let _db = client.database(&db_name);

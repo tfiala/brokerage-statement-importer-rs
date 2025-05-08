@@ -26,4 +26,4 @@ Coming soon.
 
 ## Roadmap
 
-Coming soon.
+- [ ] Add InteractiveBrokers (IBKR) flex statement importing.

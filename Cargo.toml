@@ -9,7 +9,7 @@ repository = "https://github.com/tfiala/brokerage-statement-importer-rs"
 anyhow = "1.0.98"
 brokerage-db = "0.2.1"
 clap = { version = "4.5.37", features = ["derive"] }
-dotenvy = { git = "https://github.com/allan2/dotenvy", rev = "86c0d6dd2938e615135813df9e3274bf8f42c455" }
+dotenvy = "0.15.7"
 futures = "0.3.31"
 glob = "0.3.2"
 ibkr-flex-statement = "0.3"
