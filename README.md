@@ -4,7 +4,7 @@
 [<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/tfiala/brokerage-statement-importer-rs/rust.yml?branch=main&style=for-the-badge" height="20">](https://github.com/tfiala/brokerage-statement-importer-rs/actions/workflows/rust.yml)
 [<img alt="codecov.io" src="https://img.shields.io/codecov/c/github/tfiala/brokerage-statement-importer-rs?style=for-the-badge" height="20">](https://codecov.io/gh/tfiala/brokerage-statement-importer-rs)
 
-Command-line tool for importing brokerage statements into a database.
+Library for importing brokerage statements into a brokerage database.
 
 ## Setup
 
@@ -12,8 +12,9 @@ Install the binary as below.  Consider making a shell alias for this
 command (e.g. `alias bsi='cargo run --release --bin brokerage-statement-importer'`)
 
 
-```bash
-cargo install brokerage-statement-importer
+```toml
+[dependencies]
+brokerage-statement-importer = "0.2.0"
 ```
 
 ## Functionality
