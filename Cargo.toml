@@ -1,10 +1,13 @@
 [package]
-name = "ibkr-statement-importer"
+name = "brokerage-statement-importer"
 version = "0.1.0"
 edition = "2024"
+description = "Command-line tool to import brokerage statements into a database for later analysis."
+repository = "https://github.com/tfiala/brokerage-statement-importer-rs"
 
 [dependencies]
 anyhow = "1.0.98"
+brokerage-db = "0.2.1"
 clap = { version = "4.5.37", features = ["derive"] }
 dotenvy = { git = "https://github.com/allan2/dotenvy" }
 futures = "0.3.31"

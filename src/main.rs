@@ -1,11 +1,8 @@
-pub mod db;
 mod importer;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
-use db::client::MongoClient;
-use futures::StreamExt;
-use mongodb::bson::{Document, doc};
+use mongodb::Client;
 use std::path::PathBuf;
 
 use dotenvy::EnvLoader;
@@ -64,7 +61,9 @@ async fn main() -> Result<()> {
     println!("Connecting to database at: {}", db_uri);
 
     // Connect to the database.
-    let client = MongoClient::new(&db_uri).await?;
+    let client = Client::with_uri_str(&db_uri)
+        .await
+        .expect("Failed to connect to database");
     println!("Connected to database");
 
     // Get the database.
@@ -72,34 +71,8 @@ async fn main() -> Result<()> {
         .get("DB_NAME")
         .expect("DB_NAME not set in environment")
         .to_string();
-    let db = client.get_database(&db_name).await;
+    let _db = client.database(&db_name);
     println!("Using database: {}", db_name);
-
-    // Insert something into the database.
-    let collection = db.collection::<Document>("test");
-    let doc = doc! {
-        "name": "MongoDB",
-        "type": "database",
-        "count": 1,
-        "info": {
-            "x": 203,
-            "y": 102
-        }
-    };
-    collection.insert_one(doc).await?;
-    println!("Inserted document into collection");
-
-    // Find something in the database.
-    let filter = doc! { "name": "MongoDB" };
-    let mut cursor = collection.find(filter).await?;
-
-    println!("Found documents:");
-    while let Some(result) = cursor.next().await {
-        match result {
-            Ok(document) => println!("{:?}", document),
-            Err(e) => eprintln!("Error: {}", e),
-        }
-    }
 
     match args.command {
         Commands::Import(import_args) => match import_args.command {
