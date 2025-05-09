@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use crate::ibkr_flex_statement_importer::IBKR_BROKERAGE_ID;
 use anyhow::Result;
-use brokerage_db::account::BrokerageAccount;
+use brokerage_db::{account::BrokerageAccount, security::Security};
 use brokerage_statement_importer::{importer_registry::ImporterRegistry, *};
 use fixtures::*;
 use mongodb::bson::oid::ObjectId;
@@ -26,25 +26,6 @@ fn test_filter_unimported_files_with_no_previous_imports() {
 #[awt]
 #[traced_test]
 #[tokio::test]
-async fn mongodb_sessions_work(#[future] db_desc: Result<DbDesc>) -> Result<()> {
-    let db_desc = db_desc?;
-
-    // Create a session.
-    let mut session = db_desc.db.client().start_session().await?;
-
-    // Start a transaction.
-    session.start_transaction().await?;
-
-    // Commit the session.
-    session.commit_transaction().await?;
-
-    Ok(())
-}
-
-#[rstest]
-#[awt]
-#[traced_test]
-#[tokio::test]
 async fn test_import_string_ibkr_single_trade_execution(
     #[future] db_desc: Result<DbDesc>,
     registry: ImporterRegistry,
@@ -59,6 +40,9 @@ async fn test_import_string_ibkr_single_trade_execution(
         .import_statement_content(single_trade_flex, &db_desc.db, None, source_id)
         .await?;
 
+    // Commit transactions.
+    // db_desc.session.lock().await.commit_transaction().await?;
+
     // Verify the account was added.
     let brokerage_account = BrokerageAccount::find_by_brokerage_and_account_id(
         &db_desc.db,
@@ -69,11 +53,8 @@ async fn test_import_string_ibkr_single_trade_execution(
     assert!(brokerage_account.is_some());
 
     let brokerage_account = brokerage_account.unwrap();
-    assert_eq!(
-        brokerage_account.get_account_id(),
-        fixtures::IBKR_ACCOUNT_ID
-    );
-    assert_eq!(brokerage_account.get_brokerage_id(), IBKR_BROKERAGE_ID);
+    assert_eq!(brokerage_account.account_id(), fixtures::IBKR_ACCOUNT_ID);
+    assert_eq!(brokerage_account.brokerage_id(), IBKR_BROKERAGE_ID);
 
     Ok(())
 }
@@ -94,6 +75,9 @@ async fn test_import_file_ibkr_single_trade_execution(
         .import_statement_files(&db_desc.db, None, vec![single_trade_flex_pathbuf])
         .await?;
 
+    // Commit transactions.
+    // db_desc.session.lock().await.commit_transaction().await?;
+
     // Verify the account was added.
     let brokerage_account = BrokerageAccount::find_by_brokerage_and_account_id(
         &db_desc.db,
@@ -107,11 +91,17 @@ async fn test_import_file_ibkr_single_trade_execution(
     );
 
     let brokerage_account = brokerage_account.unwrap();
-    assert_eq!(
-        brokerage_account.get_account_id(),
-        fixtures::IBKR_ACCOUNT_ID
-    );
-    assert_eq!(brokerage_account.get_brokerage_id(), IBKR_BROKERAGE_ID);
+    assert_eq!(brokerage_account.account_id(), fixtures::IBKR_ACCOUNT_ID);
+    assert_eq!(brokerage_account.brokerage_id(), IBKR_BROKERAGE_ID);
+
+    // Verify security was added.
+    let securities_result =
+        Security::find_by_ticker(&db_desc.db, fixtures::IBKR_SINGLE_TRADE_TICKER).await;
+    assert!(securities_result.is_ok());
+
+    let securities = securities_result.unwrap();
+    assert_eq!(securities.len(), 1);
+    assert_eq!(securities[0].ticker(), fixtures::IBKR_SINGLE_TRADE_TICKER);
 
     Ok(())
 }

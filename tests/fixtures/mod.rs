@@ -12,10 +12,12 @@ use testcontainers_modules::{
 };
 
 pub const IBKR_ACCOUNT_ID: &str = "U1234567";
+pub const IBKR_SINGLE_TRADE_TICKER: &str = "ARGX";
 
 pub struct DbDesc {
     pub _client: Client,
     pub db: Database,
+    // pub session: Arc<Mutex<ClientSession>>,
     pub _node: ContainerAsync<Mongo>,
 }
 
@@ -24,14 +26,18 @@ impl DbDesc {
         let node = Mongo::default().start().await?;
         let host_port = node.get_host_port_ipv4(27017).await?;
 
-        let url = format!("mongodb://localhost:{}/", host_port);
+        let url = format!("mongodb://localhost:{}/?retryWrites=false", host_port);
         let client = mongodb::Client::with_uri_str(url).await?;
         let db = client.database(db_name);
+
+        // let session = Arc::new(Mutex::new(client.start_session().await?));
+        // session.lock().await.start_transaction().await?;
 
         Ok(Self {
             _client: client,
             db,
             _node: node,
+            // session,
         })
     }
 }

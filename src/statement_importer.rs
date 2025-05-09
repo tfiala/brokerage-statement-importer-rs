@@ -1,7 +1,8 @@
 use crate::path_match::PathMatch;
 use anyhow::Result;
 use mongodb::{ClientSession, Database, bson::oid::ObjectId};
-use std::path::Path;
+use std::{path::Path, sync::Arc};
+use tokio::sync::Mutex;
 
 use async_trait::async_trait;
 
@@ -32,7 +33,7 @@ pub trait StatementImporter {
         &self,
         content: &str,
         db: &Database,
-        session: Option<&mut ClientSession>,
+        session: Option<Arc<Mutex<ClientSession>>>,
         source_id: ObjectId,
     ) -> Result<()>;
 }
