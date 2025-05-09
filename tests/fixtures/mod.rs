@@ -109,20 +109,15 @@ pub fn single_trade_flex() -> &'static str {
 
 #[fixture]
 pub fn single_trade_flex_pathbuf() -> PathBuf {
-    std::env::current_exe()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .parent()
+    let file = std::env::current_dir()
         .unwrap()
         .join("tests")
         .join("fixtures")
         .join("data")
-        .join("ibkr_flex_single_trade.xml")
+        .join("ibkr_flex_single_trade.xml");
+
+    tracing::info!("sing-trade flex file path: {:?}", file);
+    file
 }
 
 #[fixture]
