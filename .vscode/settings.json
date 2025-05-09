@@ -5,6 +5,7 @@
     "conid",
     "dotenv",
     "dotenvy",
+    "Forex",
     "IBKR",
     "pathbuf",
     "rstest",

@@ -1,12 +1,17 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
+use brokerage_statement_importer::{
+    ibkr_flex_statement_importer::IbkrFlexStatementImporter, importer_registry::ImporterRegistry,
+};
 use mongodb::{Client, Database};
 use rstest::fixture;
 use testcontainers_modules::{
     mongo::Mongo,
     testcontainers::{ContainerAsync, runners::AsyncRunner},
 };
+
+pub const IBKR_ACCOUNT_ID: &str = "U1234567";
 
 pub struct DbDesc {
     pub _client: Client,
@@ -38,12 +43,9 @@ pub async fn db_desc() -> Result<DbDesc> {
     Ok(db_conn)
 }
 
-pub const IBKR_BROKERAGE_ACCOUNT_ID: &str = "U1234567";
-
 #[fixture]
 pub fn single_trade_flex() -> &'static str {
-    r##"
-    <FlexQueryResponse queryName="example-query" type="AF">
+    r##"<FlexQueryResponse queryName="example-query" type="AF">
     <FlexStatements count="1">
     <FlexStatement accountId="U1234567" fromDate="2025-04-25" toDate="2025-04-25" period="LastBusinessDay" whenGenerated="2025-04-26;13:34:28 EDT">
     <AccountInformation accountId="U1234567" accountType="Individual" customerType="Individual" accountCapabilities="Portfolio Margin" tradingPermissions="Stocks,Options,Warrants,Forex,Futures,Crypto Currencies,Mutual Funds,Fully Paid Stock Loan" />
@@ -115,4 +117,11 @@ pub fn single_trade_flex_pathbuf() -> PathBuf {
         .join("fixtures")
         .join("data")
         .join("ibkr_flex_single_trade.xml")
+}
+
+#[fixture]
+pub fn registry() -> ImporterRegistry {
+    let mut registry = ImporterRegistry::new();
+    registry.register_importer(Box::new(IbkrFlexStatementImporter::new()));
+    registry
 }
