@@ -14,7 +14,7 @@ command (e.g. `alias bsi='cargo run --release --bin brokerage-statement-importer
 
 ```toml
 [dependencies]
-brokerage-statement-importer = "0.2.2"
+brokerage-statement-importer = "0.2.3"
 ```
 
 ## Functionality
