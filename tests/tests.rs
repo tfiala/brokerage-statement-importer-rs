@@ -4,7 +4,9 @@ use std::path::PathBuf;
 
 use crate::ibkr_flex_statement_importer::IBKR_BROKERAGE_ID;
 use anyhow::Result;
-use brokerage_db::{account::BrokerageAccount, security::Security};
+use brokerage_db::{
+    account::BrokerageAccount, security::Security, trade_execution::TradeExecution,
+};
 use brokerage_statement_importer::{importer_registry::ImporterRegistry, *};
 use fixtures::*;
 use mongodb::bson::oid::ObjectId;
@@ -56,6 +58,29 @@ async fn test_import_string_ibkr_single_trade_execution(
     assert_eq!(brokerage_account.account_id(), fixtures::IBKR_ACCOUNT_ID);
     assert_eq!(brokerage_account.brokerage_id(), IBKR_BROKERAGE_ID);
 
+    // Verify security was added.
+    let securities_result =
+        Security::find_by_ticker(&db_desc.db, fixtures::IBKR_SINGLE_TRADE_TICKER).await;
+    assert!(securities_result.is_ok());
+
+    let securities = securities_result.unwrap();
+    assert_eq!(securities.len(), 1);
+    assert_eq!(securities[0].ticker(), fixtures::IBKR_SINGLE_TRADE_TICKER);
+
+    // Verify trade execution was added.
+    let trade_execution = TradeExecution::find_by_brokerage_execution_id(
+        &db_desc.db,
+        IBKR_SINGLE_TRADE_BROKERAGE_EXECUTION_ID,
+    )
+    .await?;
+    assert!(trade_execution.is_some());
+    let trade_execution = trade_execution.unwrap();
+    assert_eq!(
+        trade_execution.brokerage_execution_id(),
+        IBKR_SINGLE_TRADE_BROKERAGE_EXECUTION_ID
+    );
+    assert_eq!(trade_execution.security_id(), securities[0].id());
+
     Ok(())
 }
 
@@ -102,6 +127,20 @@ async fn test_import_file_ibkr_single_trade_execution(
     let securities = securities_result.unwrap();
     assert_eq!(securities.len(), 1);
     assert_eq!(securities[0].ticker(), fixtures::IBKR_SINGLE_TRADE_TICKER);
+
+    // Verify trade execution was added.
+    let trade_execution = TradeExecution::find_by_brokerage_execution_id(
+        &db_desc.db,
+        IBKR_SINGLE_TRADE_BROKERAGE_EXECUTION_ID,
+    )
+    .await?;
+    assert!(trade_execution.is_some());
+    let trade_execution = trade_execution.unwrap();
+    assert_eq!(
+        trade_execution.brokerage_execution_id(),
+        IBKR_SINGLE_TRADE_BROKERAGE_EXECUTION_ID
+    );
+    assert_eq!(trade_execution.security_id(), securities[0].id());
 
     Ok(())
 }

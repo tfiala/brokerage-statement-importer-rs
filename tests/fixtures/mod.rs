@@ -13,6 +13,7 @@ use testcontainers_modules::{
 
 pub const IBKR_ACCOUNT_ID: &str = "U1234567";
 pub const IBKR_SINGLE_TRADE_TICKER: &str = "ARGX";
+pub const IBKR_SINGLE_TRADE_BROKERAGE_EXECUTION_ID: &str = "0000edae.680b59d1.01.01";
 
 pub struct DbDesc {
     pub _client: Client,
