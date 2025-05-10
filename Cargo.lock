@@ -267,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "brokerage-statement-importer"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1027,14 +1027,16 @@ dependencies = [
 
 [[package]]
 name = "ibkr-flex-statement"
-version = "0.3.5"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b36a1924f937592df2a025b56eb2470015bd36a09605694a6e7b36fe8749db64"
+checksum = "0e77ae330ef050b18a03ace16dabc74a4f23a955630eb12ad46f3e3642b658b7"
 dependencies = [
  "anyhow",
  "chrono",
  "chrono-tz",
  "roxmltree",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
